@@ -25,9 +25,26 @@ matplotlib==3.4.3
 joblib==1.0.1   
 
 ```
-conda create --prefix xxx --file ./requirements_conda.txt      
-pip install -r ./requirements_pip.txt
+conda create -n rtmscore python=3.8.11
+conda activate rtmscore
+conda install dgl-cuda11.1==0.7.0 -c dglteam
+cponda install pandas==1.0.3
+conda install prody==2.1.0 -c conda-forge
+conda install pytorch==1.9.0 pytorch=1.9.0=py3.8_cuda11.1_cudnn8.0.5_0 -c pytorch -c nvidia -c conda-forge
+conda install rdkit==2021.03.5 -c conda-forge
+iconda install openbabel==3.1.0 -c conda-forge
 ```
+
+[MDAnalysis](https://www.mdanalysis.org) installation is a bit tricky, you may need extra libraries. [This](https://github.com/maxscheurer/pycontact/issues/81) solved import issues.
+```
+sudo apt-get install libxcb-xinerama0
+conda install mdanalysis==2.0.0 -c conda-forge
+```
+
+```
+pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cu111.html
+```
+
 ### Datasets
 [PDBbind](http://www.pdbbind.org.cn)    
 [CASF-2016](http://www.pdbbind.org.cn)    
