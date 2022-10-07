@@ -40,6 +40,7 @@ iconda install openbabel==3.1.0 -c conda-forge
 sudo apt-get install libxcb-xinerama0
 conda install mdanalysis==2.0.0 -c conda-forge
 ```
+If import issue persists try running `conda init`.
 
 ```
 pip install torch-scatter -f https://data.pyg.org/whl/torch-1.9.0+cu111.html
