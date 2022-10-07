@@ -32,7 +32,7 @@ conda install pandas==1.0.3
 conda install prody==2.1.0 -c conda-forge
 conda install pytorch==1.9.0 pytorch=1.9.0=py3.8_cuda11.1_cudnn8.0.5_0 -c pytorch -c nvidia -c conda-forge
 conda install rdkit==2021.03.5 -c conda-forge
-iconda install openbabel==3.1.0 -c conda-forge
+conda install openbabel==3.1.0 -c conda-forge
 ```
 
 [MDAnalysis](https://www.mdanalysis.org) installation is a bit tricky, you may need extra libraries. [This](https://github.com/maxscheurer/pycontact/issues/81) solved import issues.
