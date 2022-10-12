@@ -75,7 +75,13 @@ python rtmscore.py -p ./1qkt_p_pocket_10.0.pdb -l ./1qkt_decoys.sdf -rc -m ../tr
 ```
 
 
+### Training
 
+Files containing graphs for training can be found [here](https://zenodo.org/record/6859325#.Y0aU38hPoyg) (check [Issue 9](https://github.com/sc8668/RTMScore/issues/9)).
+```
+wget https://zenodo.org/record/6859325/files/graphs_for_pdbbind.zip
+unzip graphs_for_pdbbind.zip -d graphs_for_pdbbind
+```
 
 
 
