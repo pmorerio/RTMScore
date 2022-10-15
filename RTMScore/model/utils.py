@@ -503,6 +503,12 @@ def mdn_loss_fn(pi, sigma, mu, y, eps=1e-10):
     loss = -th.logsumexp(th.log(pi + eps) + loglik, dim=1)
     return loss
 
+def mdn_neg_loss_fn(pi, sigma, mu, y, eps=1e-10):
+    normal = Normal(mu, sigma)
+    loss = th.exp(normal.log_prob(y.expand_as(normal.loc)))
+    loss = th.sum(loss * pi, dim=1)
+    loss = -th.log(1-loss)
+    return loss
 
 
 def run_a_train_epoch(epoch, model, data_loader, optimizer, aux_weight=0.001, device='cpu'):
@@ -524,9 +530,15 @@ def run_a_train_epoch(epoch, model, data_loader, optimizer, aux_weight=0.001, de
 		mdn = mdn_loss_fn(pi, sigma, mu, dist)
 		mdn = mdn[th.where(dist <= model.dist_threhold)[0]]
 		mdn = mdn.mean()
+		
+		# nonsense - just verifying if it runs smoothly
+		mdn_neg = mdn_neg_loss_fn(pi, sigma, mu, dist)
+		mdn_neg = mdn_neg[th.where(dist > model.dist_threhold)[0]]
+		mdn_neg = mdn_neg.mean()
+
 		atom = F.cross_entropy(atom_types, atom_labels)
 		bond = F.cross_entropy(bond_types, bond_labels)
-		loss = mdn + (atom * aux_weight) + (bond * aux_weight)
+		loss = mdn + 0.001* mdn_neg + (atom * aux_weight) + (bond * aux_weight)
 		
 		optimizer.zero_grad()
 		loss.backward()
