@@ -369,7 +369,7 @@ def main():
 	#np.save("%s_idsresx.npy"%args.outprefix, ids)
 	#save_graphs("%s_plresx.bin"%args.outprefix, list(graphs))	
 	ids, graphs_p, graphs_l =  list(zip(*results))
-	np.save("%s_idsresz.npy"%args.outprefix, ids)
+	np.save("%s_ids.npy"%args.outprefix, ids)
 	save_graphs("%s_p.bin"%args.outprefix, list(graphs_p))
 	save_graphs("%s_l.bin"%args.outprefix, list(graphs_l))
 	
