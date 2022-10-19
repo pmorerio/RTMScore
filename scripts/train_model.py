@@ -42,7 +42,8 @@ data = PDBbindDataset(ids="%s/%s_ids.npy"%(args["data_dir"], args["train_prefix"
 					  prots="%s/%s_p.bin"%(args["data_dir"], args["train_prefix"])
 					  )
 
-train_inds, val_inds = data.train_and_test_split(valnum=args["valnum"], seed=args['seeds'])
+# train_inds, val_inds = data.train_and_test_split(valnum=args["valnum"], seed=args['seeds'])
+train_inds, val_inds = data.train_and_test_split_casf_200classic(data_dir=args["data_dir"], valnum=args["valnum"], seed=args['seeds'])
 train_data = PDBbindDataset(ids=data.pdbids[train_inds],
 							ligs=np.array(data.graphsl)[train_inds],
 							prots=np.array(data.graphsp)[train_inds]							

@@ -24,6 +24,7 @@ class PDBbindDataset(Dataset):
 				):
 		if isinstance(ids,np.ndarray) or isinstance(ids,list):
 			self.pdbids = ids
+			# print(ids)
 		else:
 			try:
 				self.pdbids = np.load(ids)
@@ -83,6 +84,29 @@ class PDBbindDataset(Dataset):
 		val_inds = np.random.choice(np.arange(len(self.pdbids)),valnum, replace=False)
 		train_inds = np.setdiff1d(np.arange(len(self.pdbids)),val_inds)
 		return train_inds, val_inds
+
+
+	def train_and_test_split_casf_200classic(self, data_dir, valfrac=0.2, valnum=None, seed=0):
+		# remove complexes which are in casf2016 or 200classic
+		test_indexes = []
+		val_ids = np.load(os.path.join(data_dir,'test_ids.npy'))
+		for val_i in val_ids:
+			for i, train_i in enumerate(self.pdbids):
+				if val_i.casefold() in train_i.casefold():
+					test_indexes.append(i)
+		print(test_indexes)
+		print("Removing {} complexes (CASF and 200classic)".format(len(test_indexes)))
+		test_indexes = np.array(test_indexes)
+		train_inds = np.setdiff1d(np.arange(len(self.pdbids)),test_indexes)
+
+		np.random.seed(seed)
+		if valnum is None:
+			valnum = int(valfrac * len(self.pdbids))
+		val_inds = np.random.choice(train_inds,valnum, replace=False)
+		train_inds = np.setdiff1d(train_inds,val_inds)
+		return train_inds, val_inds
+
+		return train_inds, test_indexes
 		
 		
 class VSDataset(Dataset):
