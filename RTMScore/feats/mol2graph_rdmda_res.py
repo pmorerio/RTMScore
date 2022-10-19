@@ -315,8 +315,10 @@ def mol_to_graph2(prot_path, lig_path, cutoff=10.0, explicit_H=False, use_chiral
 
 
 def pdbbind_handle(pdbid, args):
-	prot_path = "%s/%s/%s_prot/%s_p_pocket_%s.pdb"%(args.dir, pdbid, pdbid, pdbid, args.cutoff)
-	lig_path = "%s/%s/%s_prot/%s_l.sdf"%(args.dir, pdbid, pdbid, pdbid)
+	# prot_path = "%s/%s/%s_prot/%s_p_pocket_%s.pdb"%(args.dir, pdbid, pdbid, pdbid, args.cutoff)
+	prot_path = "%s/%s/pocket.pdb"%(args.dir, pdbid)
+	# lig_path = "%s/%s/%s_prot/%s_l.sdf"%(args.dir, pdbid, pdbid, pdbid)
+	lig_path = "%s/%s/crystal_poses_COM.mol2"%(args.dir, pdbid)
 	try: 
 		gp, gl = mol_to_graph2(prot_path, 
 							lig_path, 
@@ -355,6 +357,7 @@ def UserInput():
 def main():
 	args = UserInput()
 	pdbids = [x for x in os.listdir(args.dir) if os.path.isdir("%s/%s"%(args.dir, x))]
+	# pdbids = pdbids[:100]
 	if args.parallel:
 		results = Parallel(n_jobs=-1)(delayed(pdbbind_handle)(pdbid, args) for pdbid in pdbids)
 	else:
@@ -367,8 +370,8 @@ def main():
 	#save_graphs("%s_plresx.bin"%args.outprefix, list(graphs))	
 	ids, graphs_p, graphs_l =  list(zip(*results))
 	np.save("%s_idsresz.npy"%args.outprefix, ids)
-	save_graphs("%s_presz.bin"%args.outprefix, list(graphs_p))
-	save_graphs("%s_lresz.bin"%args.outprefix, list(graphs_l))
+	save_graphs("%s_p.bin"%args.outprefix, list(graphs_p))
+	save_graphs("%s_l.bin"%args.outprefix, list(graphs_l))
 	
 
 
