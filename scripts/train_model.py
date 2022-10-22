@@ -26,6 +26,7 @@ args['device'] = 'cuda' if th.cuda.is_available() else 'cpu'
 args['seeds'] = 126
 args["data_dir"] = "/data2T/graphs_for_pdbbind"
 args["train_prefix"] = "v2020_train"
+# args["train_prefix"] = "v2022_train"
 #args["test1_prefix"] = "v2020_casf"
 #args["test2_prefix"] = "v2020_core"
 args["valnum"] = 1500

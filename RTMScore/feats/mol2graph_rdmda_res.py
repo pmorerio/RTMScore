@@ -318,7 +318,7 @@ def pdbbind_handle(pdbid, args):
 	# prot_path = "%s/%s/%s_prot/%s_p_pocket_%s.pdb"%(args.dir, pdbid, pdbid, pdbid, args.cutoff)
 	prot_path = "%s/%s/pocket.pdb"%(args.dir, pdbid)
 	# lig_path = "%s/%s/%s_prot/%s_l.sdf"%(args.dir, pdbid, pdbid, pdbid)
-	lig_path = "%s/%s/%s_ligand.mol2"%(args.dir, pdbid, pdbid)
+	lig_path = "%s/%s/%s_ligand.sdf"%(args.dir, pdbid, pdbid)
 	try: 
 		gp, gl = mol_to_graph2(prot_path, 
 							lig_path, 

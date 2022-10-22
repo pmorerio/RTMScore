@@ -93,10 +93,11 @@ class PDBbindDataset(Dataset):
 		for val_i in val_ids:
 			for i, train_i in enumerate(self.pdbids):
 				if val_i.casefold() in train_i.casefold():
+					# print(val_i)
 					test_indexes.append(i)
-		print(test_indexes)
-		print("Removing {} complexes (CASF and 200classic)".format(len(test_indexes)))
 		test_indexes = np.array(test_indexes)
+		print(self.pdbids[test_indexes])
+		print("Removing {} complexes (CASF and 200classic)".format(len(test_indexes)))
 		train_inds = np.setdiff1d(np.arange(len(self.pdbids)),test_indexes)
 
 		np.random.seed(seed)
@@ -105,8 +106,6 @@ class PDBbindDataset(Dataset):
 		val_inds = np.random.choice(train_inds,valnum, replace=False)
 		train_inds = np.setdiff1d(train_inds,val_inds)
 		return train_inds, val_inds
-
-		return train_inds, test_indexes
 		
 		
 class VSDataset(Dataset):
