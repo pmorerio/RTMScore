@@ -224,14 +224,14 @@ def calc_bond_features(bond, use_chirality=True):
 
 
 	
-def load_mol(molpath, explicit_H=False, use_chirality=True):
+def load_mol(molpath, explicit_H=False, use_chirality=True, sanitize=True):
 	# load mol
 	if re.search(r'.pdb$', molpath):
-		mol = Chem.MolFromPDBFile(molpath, removeHs=not explicit_H)
+		mol = Chem.MolFromPDBFile(molpath, removeHs=not explicit_H, sanitize=sanitize)
 	elif re.search(r'.mol2$', molpath):
-		mol = Chem.MolFromMol2File(molpath, removeHs=not explicit_H)
+		mol = Chem.MolFromMol2File(molpath, removeHs=not explicit_H, sanitize=sanitize)
 	elif re.search(r'.sdf$', molpath):			
-		mol = Chem.MolFromMolFile(molpath, removeHs=not explicit_H)
+		mol = Chem.MolFromMolFile(molpath, removeHs=not explicit_H, sanitize=sanitize)
 	else:
 		raise IOError("only the molecule files with .pdb|.sdf|.mol2 are supported!")	
 	
@@ -303,8 +303,12 @@ def mol_to_graph(mol, explicit_H=False, use_chirality=True):
 
 
 def mol_to_graph2(prot_path, lig_path, cutoff=10.0, explicit_H=False, use_chirality=True):
-	prot = load_mol(prot_path, explicit_H=explicit_H, use_chirality=use_chirality) 
-	lig = load_mol(lig_path, explicit_H=explicit_H, use_chirality=use_chirality)
+	try:
+		prot = load_mol(prot_path, explicit_H=explicit_H, use_chirality=use_chirality) 
+		lig = load_mol(lig_path, explicit_H=explicit_H, use_chirality=use_chirality)
+	except:
+		prot = load_mol(prot_path, explicit_H=explicit_H, use_chirality=use_chirality, sanitize=False) 
+		lig = load_mol(lig_path, explicit_H=explicit_H, use_chirality=use_chirality, sanitize=False)
 	#gm = obtain_inter_graphs(prot, lig, cutoff=cutoff)
 	#return gm
 	#up = mda.Universe(prot)
@@ -326,7 +330,7 @@ def pdbbind_handle(pdbid, args):
 							explicit_H=args.useH, 
 							use_chirality=args.use_chirality)
 	except:
-		print("%s failed to generare the graph"%pdbid)
+		print("%s failed to generate the graph"%pdbid)
 		gp, gl = None, None
 		#gm = None
 	return pdbid, gp, gl
@@ -343,13 +347,14 @@ def UserInput():
 						help='The output bin file.')	
 	p.add_argument('-usH', '--useH', default=False, action="store_true",
 						help='whether to use the explicit H atoms.')
-	p.add_argument('-uschi', '--use_chirality', default=False, action="store_true",
+	p.add_argument('-uschi', '--use_chirality', default=True, action="store_true",
 						help='whether to use chirality.')							
 	p.add_argument('-p', '--parallel', default=False, action="store_true",
 						help='whether to obtain the graphs in parallel (When the dataset is too large,\
 						 it may be out of memory when conducting the parallel mode).')	
 	
 	args = p.parse_args()	
+	print(args)
 	return args
 
 

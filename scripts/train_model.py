@@ -6,7 +6,7 @@ import dgl
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import sys
-sys.path.append("/home/shenchao/resdocktest2/rtmscore2")
+sys.path.append("/home/pmorerio/code/RTMScore")
 from RTMScore.data.data import PDBbindDataset
 from RTMScore.model.model2 import RTMScore, DGLGraphTransformer 
 from RTMScore.model.utils import collate, EarlyStopping, set_random_seed, run_a_train_epoch, run_an_eval_epoch, mdn_loss_fn
@@ -14,7 +14,7 @@ import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 args={}
 args["num_epochs"] = 5000
-args["batch_size"] = 32#64#128
+args["batch_size"] = 16#32#64#128
 args["aux_weight"] = 0.001
 args['patience'] = 70 
 args["num_workers"] = 8
@@ -25,8 +25,8 @@ args['weight_decay'] = 5
 args['device'] = 'cuda' if th.cuda.is_available() else 'cpu'
 args['seeds'] = 126
 args["data_dir"] = "/data2T/graphs_for_pdbbind"
-args["train_prefix"] = "v2020_train"
-# args["train_prefix"] = "v2022_train"
+# args["train_prefix"] = "v2020_train"
+args["train_prefix"] = "v2022_train"
 #args["test1_prefix"] = "v2020_casf"
 #args["test2_prefix"] = "v2020_core"
 args["valnum"] = 1500
