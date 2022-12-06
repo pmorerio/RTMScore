@@ -24,6 +24,7 @@ pandas==1.3.2
 matplotlib==3.4.3   
 joblib==1.0.1   
 
+The following commands should set up a working `conda` environment.
 ```
 conda create -n rtmscore python=3.8.11
 conda activate rtmscore
