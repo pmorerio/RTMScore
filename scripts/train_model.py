@@ -25,6 +25,7 @@ args['weight_decay'] = 5
 args['device'] = 'cuda' if th.cuda.is_available() else 'cpu'
 args['seeds'] = 126
 args["data_dir"] = "/data2T/graphs_for_pdbbind"
+args["ba_file"] = "/data2T/dompe_pose_selection/PDBbind2020_expBA.csv"
 # args["train_prefix"] = "v2020_train"
 args["train_prefix"] = "v2022_train"
 #args["test1_prefix"] = "v2020_casf"
@@ -40,18 +41,21 @@ args["dist_threhold"] = 7.
 
 data = PDBbindDataset(ids="%s/%s_ids.npy"%(args["data_dir"], args["train_prefix"]),
 					  ligs="%s/%s_l.bin"%(args["data_dir"], args["train_prefix"]),
-					  prots="%s/%s_p.bin"%(args["data_dir"], args["train_prefix"])
+					  prots="%s/%s_p.bin"%(args["data_dir"], args["train_prefix"]),
+					  ba_file=args["ba_file"]
 					  )
 
-# train_inds, val_inds = data.train_and_test_split(valnum=args["valnum"], seed=args['seeds'])
-train_inds, val_inds = data.train_and_test_split_casf_200classic(data_dir=args["data_dir"], valnum=args["valnum"], seed=args['seeds'])
+train_inds, val_inds = data.train_and_test_split(valnum=args["valnum"], seed=args['seeds'])
+# train_inds, val_inds = data.train_and_test_split_casf_200classic(data_dir=args["data_dir"], valnum=args["valnum"], seed=args['seeds'])
 train_data = PDBbindDataset(ids=data.pdbids[train_inds],
 							ligs=np.array(data.graphsl)[train_inds],
-							prots=np.array(data.graphsp)[train_inds]							
+							prots=np.array(data.graphsp)[train_inds],
+					  		ba_file=args["ba_file"]							
 							)
 val_data = PDBbindDataset(ids=data.pdbids[val_inds],
 							ligs=np.array(data.graphsl)[val_inds],
-							prots=np.array(data.graphsp)[val_inds]
+							prots=np.array(data.graphsp)[val_inds],
+					        ba_file=args["ba_file"]
 							)
 							
 #test_data1 = PDBbindDataset(ids="%s/%s_idsresx.npy"%(args["data_dir"], args["test1_prefix"]),

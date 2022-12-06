@@ -512,7 +512,7 @@ def run_a_train_epoch(epoch, model, data_loader, optimizer, aux_weight=0.001, de
 	atom_loss = 0
 	bond_loss = 0
 	for batch_id, batch_data in enumerate(data_loader):
-		pdbids, bgl, bgp = batch_data
+		pdbids, bgl, bgp, ba = batch_data
 		bgl = bgl.to(device)
 		bgp = bgp.to(device)
 		
@@ -521,9 +521,11 @@ def run_a_train_epoch(epoch, model, data_loader, optimizer, aux_weight=0.001, de
 		
 		pi, sigma, mu, dist, atom_types, bond_types, batch = model(bgp, bgl)
 		
-		mdn = mdn_loss_fn(pi, sigma, mu, dist)
+		# mdn = mdn_loss_fn(pi, sigma, mu, dist)
+		mdn = mdn_loss_fn(pi, sigma, mu, dist) * ba
 		mdn = mdn[th.where(dist <= model.dist_threhold)[0]]
-		mdn = mdn.mean()
+		# mdn = mdn.mean()
+		mdn = mdn.sum / ba.sum()
 		atom = F.cross_entropy(atom_types, atom_labels)
 		bond = F.cross_entropy(bond_types, bond_labels)
 		loss = mdn + (atom * aux_weight) + (bond * aux_weight)
@@ -555,7 +557,7 @@ def run_an_eval_epoch(model, data_loader, pred=False, atom_contribution=False, r
 	res_contrs = []
 	with th.no_grad():
 		for batch_id, batch_data in enumerate(data_loader):
-			pdbids, bgl, bgp = batch_data
+			pdbids, bgl, bgp, ba = batch_data
 			bgl = bgl.to(device)
 			bgp = bgp.to(device)
 			atom_labels = th.argmax(bgl.ndata["atom"][:,:17], dim=1, keepdim=False)
@@ -580,9 +582,11 @@ def run_an_eval_epoch(model, data_loader, pred=False, atom_contribution=False, r
 						res_contrs.extend([contribs[i].sum(0).cpu().detach().numpy() for i in range(bgl.batch_size)])
 			
 			else:
-				mdn = mdn_loss_fn(pi, sigma, mu, dist)
+				# mdn = mdn_loss_fn(pi, sigma, mu, dist)
+				mdn = mdn_loss_fn(pi, sigma, mu, dist) * ba
 				mdn = mdn[th.where(dist <= model.dist_threhold)[0]]
-				mdn = mdn.mean()
+				# mdn = mdn.mean()
+				mdn = mdn.sum() / ba.sum()
 				atom = F.cross_entropy(atom_types, atom_labels)
 				bond = F.cross_entropy(bond_types, bond_labels)
 				loss = mdn + (atom * aux_weight) + (bond * aux_weight)
@@ -621,7 +625,7 @@ def calculate_probablity(pi, sigma, mu, y):
 
 
 def collate(data):
-	pdbids, graphsl, graphsp = map(list, zip(*data))
+	pdbids, graphsl, graphsp, ba = map(list, zip(*data))
 	bgl = dgl.batch(graphsl)
 	bgp = dgl.batch(graphsp)
 	for nty in bgl.ntypes:
@@ -632,7 +636,7 @@ def collate(data):
 		bgp.set_n_initializer(dgl.init.zero_initializer, ntype=nty)
 	for ety in bgp.canonical_etypes:
 		bgp.set_e_initializer(dgl.init.zero_initializer, etype=ety)	
-	return pdbids, bgl, bgp
+	return pdbids, bgl, bgp, ba
 
 
 def set_random_seed(seed=10):

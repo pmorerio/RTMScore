@@ -12,7 +12,7 @@ import tempfile
 import shutil
 from ..feats.mol2graph_rdmda_res import mol_to_graph, load_mol, prot_to_graph
 from ..feats.extract_pocket_prody import extract_pocket
-
+import csv
 
 
 
@@ -20,7 +20,8 @@ class PDBbindDataset(Dataset):
 	def __init__(self,  
 				ids=None,
 				ligs=None,
-				prots=None
+				prots=None,
+				ba_file=None
 				):
 		if isinstance(ids,np.ndarray) or isinstance(ids,list):
 			self.pdbids = ids
@@ -55,7 +56,17 @@ class PDBbindDataset(Dataset):
 		self.graphsl = list(self.graphsl)
 		self.graphsp = list(self.graphsp)
 		assert len(self.pdbids) == len(self.graphsl) == len(self.graphsp)
+
+		# Binding affinity
+		self.ba_file=ba_file
+		if self.ba_file is not None:
+			self.binding_affinity = {}
+			with open(ba_file, 'r') as csv_file:
+				binding_affinity_file = csv.DictReader(csv_file)
+				for comp in binding_affinity_file:
+					self.binding_affinity.update({comp['rowID'] : float(comp['pK'])})
 		
+
 	def __getitem__(self, idx): 
 		""" Get graph and label by index
 		
@@ -68,7 +79,7 @@ class PDBbindDataset(Dataset):
 		-------
 		(dgl.DGLGraph, Tensor)
 		"""
-		return self.pdbids[idx], self.graphsl[idx], self.graphsp[idx]
+		return self.pdbids[idx], self.graphsl[idx], self.graphsp[idx], self.binding_affinity[self.pdbids[idx]]
 	
 	
 	def __len__(self):
