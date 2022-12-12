@@ -254,7 +254,7 @@ def mol_to_graph(mol, explicit_H=False, use_chirality=True):
 	
 	atom_feats = np.array([calc_atom_features(a, explicit_H=explicit_H) for a in mol.GetAtoms()])
 	if use_chirality:
-		chiralcenters = Chem.FindMolChiralCenters(mol,force=True,includeUnassigned=True, useLegacyImplementation=False)
+		chiralcenters = Chem.FindMolChiralCenters(mol,force=True,includeUnassigned=True, useLegacyImplementation=True)
 		chiral_arr = np.zeros([num_atoms,3]) 
 		for (i, rs) in chiralcenters:
 			if rs == 'R':
