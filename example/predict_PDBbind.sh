@@ -1,7 +1,7 @@
 #!/bin/bash
 OUT=results_PDB
 mkdir $OUT
-for complex_folder in $1/*19436_8GPB*
+for complex_folder in $1/*
 do
 	DIR=$(basename "$complex_folder")
 	echo $DIR
