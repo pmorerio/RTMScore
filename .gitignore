@@ -8,3 +8,11 @@ __pycache__/
 *.log
 .vscode/
 *.mol2
+*.bin
+*.npy
+
+PDBbind_2022_BK/
+ALLPDBs/
+data_*
+results_*
+*.tar.gz
