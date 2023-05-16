@@ -1,5 +1,9 @@
 #!/bin/bash
 
+### run the following in terminal
+# conda activate rtmscore
+# ./predict_casf2016.sh
+
 data_dir='data_concatenated_casf2016/'
 coreset_dir='/data01/pmorerio/CASF-2016/coreset/*/'
 decoys_dir='/data01/pmorerio/CASF-2016/decoys_docking/'
@@ -14,12 +18,12 @@ mkdir $data_dir $results_coreset_dir $results_decoys_dir $results_concatenated_d
 for complex_folder in $coreset_dir
 	do
 	### echo (for debugging only)
-	echo ${complex_folder}
+	# echo ${complex_folder}
 	echo ${complex_folder: -5:4}
-	echo ${complex_folder}${complex_folder: -5:4}_pocket.pdb
-	echo ${complex_folder}${complex_folder: -5:4}_ligand.mol2
-	echo ${data_dir}${complex_folder: -5:4}_pocket.pdb
-	echo ${data_dir}${complex_folder: -5:4}_ligand.mol2
+	# echo ${complex_folder}${complex_folder: -5:4}_pocket.pdb
+	# echo ${complex_folder}${complex_folder: -5:4}_ligand.mol2
+	# echo ${data_dir}${complex_folder: -5:4}_pocket.pdb
+	# echo ${data_dir}${complex_folder: -5:4}_ligand.mol2
 	### copy files
 	mkdir ${data_dir}${complex_folder: -5:4}/
 	cp ${complex_folder}${complex_folder: -5:4}_pocket.pdb ${data_dir}${complex_folder: -5:4}/
@@ -58,7 +62,7 @@ for complex_folder in $coreset_dir
 	end_time=$(date +%s)
 	elapsed=$(( end_time - start_time ))
 	echo $elapsed
-	done
+	done  > eval.log
 
 ### script to process coreset alone
 # mkdir results_casf2016
