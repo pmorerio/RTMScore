@@ -26,6 +26,7 @@ joblib==1.0.1
 
 The following commands should set up a working `conda` environment.
 ```
+conda update -y conda
 conda create -n rtmscore python=3.8.11
 conda activate rtmscore
 conda install dgl-cuda11.1==0.7.0 -c dglteam
@@ -84,6 +85,17 @@ wget https://zenodo.org/record/6859325/files/graphs_for_pdbbind.zip
 unzip graphs_for_pdbbind.zip -d graphs_for_pdbbind
 ```
 
+Following https://discuss.pytorch.org/t/runtimeerror-unable-to-open-shared-memory-object-depending-on-the-model/116090/3 to fix ```RuntimeError: unable to open shared memory object``` error
+```
+conda activate rtmscore
+ulimit -n 64000
+```
+
+Now start training
+```
+cd scripts/
+CUDA_VISIBLE_DEVICES=1 python train_model.py
+```
 
 
 
