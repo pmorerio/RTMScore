@@ -6,7 +6,8 @@ import dgl
 from torch.utils.data import DataLoader
 import torch.nn.functional as F
 import sys
-sys.path.append("/home/pmorerio/code/RTMScore")
+import logging
+sys.path.append("/home/wahmed/codes/RTMScore")
 from RTMScore.data.data import PDBbindDataset
 from RTMScore.model.model2 import RTMScore, DGLGraphTransformer 
 from RTMScore.model.utils import collate, EarlyStopping, set_random_seed, run_a_train_epoch, run_an_eval_epoch, mdn_loss_fn
@@ -14,17 +15,17 @@ import torch.multiprocessing
 torch.multiprocessing.set_sharing_strategy('file_system')
 args={}
 args["num_epochs"] = 5000
-args["batch_size"] = 16#32#64#128
+args["batch_size"] = 16 #32#64#128
 args["aux_weight"] = 0.001
 args['patience'] = 70 
 args["num_workers"] = 8
-args["model_path"] = "xxx.pth"
+args["model_path"] = "model_v2.pth"
 args['mode'] = "lower"
 args['lr'] = 3
 args['weight_decay'] = 5
 args['device'] = 'cuda' if th.cuda.is_available() else 'cpu'
 args['seeds'] = 126
-args["data_dir"] = "/data2T/graphs_for_pdbbind"
+args["data_dir"] = "/data01/pmorerio/graphs_for_pdbbind"
 # args["train_prefix"] = "v2020_train"
 args["train_prefix"] = "v2022_train"
 #args["test1_prefix"] = "v2020_casf"
@@ -36,6 +37,14 @@ args["n_gaussians"] = 10
 args["dropout_rate"] = 0.10
 args["dist_threhold"] = 7.
 
+
+logger = logging.getLogger("ydk_logger")
+fileHandler = logging.FileHandler("train_%s.log"%(args["model_path"][:-4]))
+streamHandler = logging.StreamHandler()
+logger.addHandler(fileHandler)
+logger.addHandler(streamHandler)
+logger.setLevel(logging.INFO)
+logger.info(args)
 
 
 data = PDBbindDataset(ids="%s/%s_ids.npy"%(args["data_dir"], args["train_prefix"]),
@@ -115,12 +124,12 @@ for epoch in range(args["num_epochs"]):
 	# Train
 	total_loss_train, mdn_loss_train, atom_loss_train, bond_loss_train = run_a_train_epoch(epoch, model, train_loader, optimizer, aux_weight=args["aux_weight"], device=args["device"])	
 	if np.isinf(mdn_loss_train) or np.isnan(mdn_loss_train): 
-		print('Inf ERROR')
+		logger.info('Inf ERROR')
 		break
 	# Validation and early stop
 	total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val = run_an_eval_epoch(model, val_loader, dist_threhold=args["dist_threhold"], aux_weight=args["aux_weight"], device=args["device"])
 	early_stop = stopper.step(total_loss_val, model)
-	print('epoch {:d}/{:d}, total_loss_val {:.4f}, mdn_loss_val {:.4f}, atom_loss_val {:.4f}, bond_loss_val {:.4f}, best validation {:.4f}'.format(epoch + 1, args['num_epochs'], total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val, stopper.best_score)) #+' validation result:', validation_result)
+	logger.info('epoch {:d}/{:d}, total_loss_val {:.4f}, mdn_loss_val {:.4f}, atom_loss_val {:.4f}, bond_loss_val {:.4f}, best validation {:.4f}'.format(epoch + 1, args['num_epochs'], total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val, stopper.best_score)) #+' validation result:', validation_result)
 	if early_stop:
 		break
 
@@ -129,8 +138,8 @@ stopper.load_checkpoint(model)
 total_loss_train, mdn_loss_train, atom_loss_train, bond_loss_train = run_an_eval_epoch(model, train_loader, dist_threhold=args["dist_threhold"], aux_weight=args["aux_weight"], device=args["device"])
 total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val = run_an_eval_epoch(model, val_loader, dist_threhold=args["dist_threhold"], aux_weight=args["aux_weight"], device=args["device"])		
 
-print("total_loss_train:%s, mdn_loss_train:%s, atom_loss_train:%s, bond_loss_train:%s"%(total_loss_train, mdn_loss_train, atom_loss_train, bond_loss_train))
-print("total_loss_val:%s, mdn_loss_val:%s, atom_loss_val:%s, bond_loss_val:%s"%(total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val))
+logger.info("total_loss_train:%s, mdn_loss_train:%s, atom_loss_train:%s, bond_loss_train:%s"%(total_loss_train, mdn_loss_train, atom_loss_train, bond_loss_train))
+logger.info("total_loss_val:%s, mdn_loss_val:%s, atom_loss_val:%s, bond_loss_val:%s"%(total_loss_val, mdn_loss_val, atom_loss_val, bond_loss_val))
 
 
 
