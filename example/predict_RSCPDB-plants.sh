@@ -7,7 +7,7 @@
 ALLPDBs_dir='/data01/pmorerio/ALLPDBs/*/'
 PDB_plants_dir='/home/wahmed/codes/data/RSCPDB_Plants/PDBs_short/*/Plants_chemplp_speed1'
 model_dir='../trained_models/rtmscore_model1.pth'
-results_dir_mol='./results_RSCPDB_Plants_mol/'
+results_dir_mol='./results_RTMScore_RSCPDB_Plants_mol/'
 results_dir_crystal='./results_ALLPDBs_crystal/*'
 
 ################################# compute results using plants_mol and plants_sdf ##################################
