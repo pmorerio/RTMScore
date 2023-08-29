@@ -20,7 +20,6 @@ scikit-learn==0.24.2
 scipy==1.6.2   
 seaborn==0.11.2   
 numpy==1.20.3    
-pandas==1.3.2   
 matplotlib==3.4.3   
 joblib==1.0.1   
 
